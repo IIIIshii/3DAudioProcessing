@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "SeparationThread.h"
 
 //==============================================================================
 /*
@@ -10,7 +11,8 @@
 class MainComponent  : public juce::AudioAppComponent,
                         public juce::Button::Listener,
                         public juce::ComboBox::Listener,
-                        public juce::Slider::Listener
+                        public juce::Slider::Listener,
+                        public SeparationThread::Listener
 {
 public:
     //==============================================================================
@@ -29,6 +31,9 @@ public:
     void buttonClicked (juce::Button* button) override;
     void comboBoxChanged (juce::ComboBox* comboBox) override;
     void sliderValueChanged (juce::Slider* slider) override;
+    
+    // SeparationThread::Listener implementation
+    void separationFinished(const juce::OwnedArray<juce::AudioBuffer<float>>& resultBuffers) override;
 
 private:
     //==============================================================================
@@ -38,6 +43,9 @@ private:
     std::unique_ptr<juce::ComboBox> separationSelector;
     std::unique_ptr<juce::Slider> separationSlider;
     std::unique_ptr<juce::TextButton> separateButton;
+    int selectablesourceNum;
+    std::unique_ptr<SeparationThread> separationThread;
+    std::unique_ptr<juce::File> sourceFile;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)

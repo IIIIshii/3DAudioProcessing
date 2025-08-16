@@ -1,4 +1,5 @@
 #include "MainComponent.h"
+#include "SeparationThread.h"
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -32,7 +33,8 @@ MainComponent::MainComponent()
     separationSelector->setSelectedId(1);   //Set IS-NMF as default
 
     separationSlider->setEnabled(false);
-    separationSlider->setRange(2, 8, 1);
+    selectablesourceNum = 8;
+    separationSlider->setRange(2, selectablesourceNum, 1);
     separationSlider->setValue(4);
 
     separateButton->setEnabled(false);
@@ -124,8 +126,8 @@ void MainComponent::buttonClicked (juce::Button* button)
         fileChooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
                                   [this](const juce::FileChooser& chooser)
                                   {
-                                      juce::File sourceFile = chooser.getResult();
-                                      DBG("Loaded file is " + sourceFile.getFullPathName());
+                                      sourceFile = std::make_unique<juce::File>(chooser.getResult());
+                                      DBG("Loaded file is " + sourceFile->getFullPathName());
                                       separationSelector->setEnabled(true);
                                       separationSlider->setEnabled(true);
                                       separateButton->setEnabled(true);
@@ -135,6 +137,9 @@ void MainComponent::buttonClicked (juce::Button* button)
         // Start the separation process
         DBG("Starting separation...");
         separateButton->setEnabled(false);
+
+        separationThread = std::make_unique<SeparationThread>(*sourceFile, 1, static_cast<int>(separationSlider->getValue()), *this);
+        separationThread->startThread();
     }
 }
 
@@ -142,6 +147,13 @@ void MainComponent::comboBoxChanged (juce::ComboBox* selector)
 {
     if (selector == separationSelector.get())
     {
+        if(separationSelector->getSelectedId() == 1){
+            selectablesourceNum = 8;    //IS-NMF
+        } else {
+            selectablesourceNum = 2;    //Fast-ICA
+        }
+        
+        separationSlider->setRange(2, selectablesourceNum, 1);
         // Handle separation method selection change
         DBG("Selected separation method: " + separationSelector->getText());
     }
@@ -154,4 +166,11 @@ void MainComponent::sliderValueChanged (juce::Slider* slider)
         // Handle separation amount slider value change
         DBG("Separation amount: " + juce::String(slider->getValue()));
     }
+}
+
+void MainComponent::separationFinished(const juce::OwnedArray<juce::AudioBuffer<float>>& resultBuffers)
+{
+    // Handle the separation results
+    DBG("Separation finished with " + juce::String(resultBuffers.size()) + " result buffers");
+    
 }
