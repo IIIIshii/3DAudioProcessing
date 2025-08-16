@@ -3,6 +3,9 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
+    openButton = std::make_unique<juce::TextButton>("Open File");
+    addAndMakeVisible (*openButton);
+    openButton->addListener (this);
     // Make sure you set the size of the component after
     // you add any child components.
     setSize (800, 600);
@@ -72,4 +75,23 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
+    openButton->setBounds (10, 10, 100, 30);
+}
+
+void MainComponent::buttonClicked (juce::Button* button)
+{
+    if (button == openButton.get())
+    {
+        // Open file dialog
+        fileChooser = std::make_unique<juce::FileChooser>("Select a Sound Source File",
+                                                          juce::File::getSpecialLocation(juce::File::userDocumentsDirectory),
+                                                          "*.wav;*.flac;*.mp3");
+
+        fileChooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
+                                  [this](const juce::FileChooser& chooser)
+                                  {
+                                      juce::File sourceFile = chooser.getResult();
+                                      DBG("Loaded file is " + sourceFile.getFullPathName());
+                                  });
+    }
 }
