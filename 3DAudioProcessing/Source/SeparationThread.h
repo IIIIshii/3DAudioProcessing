@@ -31,8 +31,8 @@ public:
 
 private:
     juce::File inputFile;
-    int numComponents;
     int separationType;
+    int numSources;
     Listener& listener;
 
     juce::AudioFormatManager formatManager;

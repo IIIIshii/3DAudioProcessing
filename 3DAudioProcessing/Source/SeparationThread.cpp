@@ -11,7 +11,7 @@
 #include "SeparationThread.h"
 
 SeparationThread::SeparationThread(const juce::File& inputFile, int separationType, int numSources, Listener& listener)
-    : Thread("SeparationThread"), inputFile(inputFile), numComponents(numSources), separationType(separationType), listener(listener)
+    : Thread("SeparationThread"), inputFile(inputFile), separationType(separationType), numSources(numSources), listener(listener)
 {
     formatManager.registerBasicFormats();
     reader.reset(formatManager.createReaderFor(inputFile));
