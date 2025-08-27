@@ -23,6 +23,8 @@ class ISNMF
 
     ~ISNMF();
 
+    void monoralize();
+
     void STFT(juce::AudioBuffer<float> originalBuffer, int fftSize, int hopSize);
 
     void processNMF(const Eigen::MatrixXf& targetMatrix, int numIterations);
@@ -30,6 +32,8 @@ class ISNMF
     void ISTFT(Eigen::MatrixXf separatedMagSpec);
 
     void restore(juce::AudioBuffer<float>& returnData);
+
+    void processNMF();
 
   private:
     const float epsilon_ = 1e-9f;
