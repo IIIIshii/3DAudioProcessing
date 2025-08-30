@@ -23,7 +23,7 @@ class ISNMF
 
     ~ISNMF();
 
-    void monoralize();
+    void monoralize(juce::AudioBuffer<float>& buffer);
 
     void STFT(juce::AudioBuffer<float> originalBuffer, int fftSize, int hopSize);
 
@@ -33,7 +33,7 @@ class ISNMF
 
     void restore(juce::AudioBuffer<float>& returnData);
 
-    void processNMF();
+    void processNMF(juce::AudioBuffer<float>& buffer);
 
   private:
     const float epsilon_ = 1e-9f;

@@ -43,17 +43,9 @@ void SeparationThread::run()
 
     if(separationType == 1)
     {
-        //IS-NMF
-      //monoralize
-      bufferOriginalData.applyGain(0.5f);
-      bufferOriginalData.addFrom(0, 0, bufferOriginalData, 1, 0, bufferOriginalData.getNumSamples());
-      bufferOriginalData.setSize(1, bufferOriginalData.getNumSamples(), true);
-
-      //STFT
-
       //IS-NMF
-
-      //ISTFT
+      ISNMF nmf(numSources);
+      nmf.processNMF(bufferOriginalData);
     } else {
       //Fast-ICA
     }
