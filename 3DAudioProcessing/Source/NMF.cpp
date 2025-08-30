@@ -22,8 +22,10 @@ ISNMF::ISNMF(int numSources)
 ISNMF::~ISNMF(){
 
 }
-void monoralize(){
-
+void ISNMF::monoralize(juce::AudioBuffer<float>& buffer){
+  buffer.applyGain(0.5f);
+  buffer.addFrom(0, 0, buffer, 1, 0, buffer.getNumSamples());
+  buffer.setSize(1, buffer.getNumSamples(), true);
 }
 
 
@@ -43,6 +45,6 @@ void restore(juce::AudioBuffer<float>& returnData){
 
 }
 
-void processNMF(){
-
+void ISNMF::processNMF(juce::AudioBuffer<float>& buffer){
+  monoralize(buffer);
 }
